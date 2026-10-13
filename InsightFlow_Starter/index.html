@@ -1,0 +1,867 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>InsightFlow — Intelligent Customer Feedback & Decision Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <canvas id="ambient-canvas" aria-hidden="true"></canvas>
+  <div class="cursor-glow" aria-hidden="true"></div>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="#" aria-label="InsightFlow home"><span class="brand-mark">i<span>f</span></span><span>insight<span class="brand-light">flow</span><small>VOICE → DECISIONS</small></span></a>
+      <div class="workspace-label">WORKSPACE</div>
+      <button class="nav-item active" data-view="overview"><span>◈</span> Overview <kbd>01</kbd></button>
+      <button class="nav-item" data-view="feedback"><span>▤</span> Feedback explorer <kbd>02</kbd></button>
+      <button class="nav-item" data-view="radar"><span>◎</span> Complaint radar <kbd>03</kbd></button>
+      <button class="nav-item" data-view="actions"><span>↗</span> Fix-first actions <kbd>04</kbd></button>
+      <button class="nav-item" data-view="tracker"><span>▦</span> Issue tracker <kbd>05</kbd></button>
+      <button class="nav-item" data-view="adaption"><span>⚡</span> Adaption engine <kbd>06</kbd></button>
+      <button class="nav-item" data-view="report"><span>📄</span> Executive report <kbd>07</kbd></button>
+      <div class="sidebar-bottom">
+        <div class="pipeline-card"><span class="pulse"></span><div><b>Adaption AI Pipeline</b><small id="pipeline-status">Contest dataset ready (7,000 rows)</small></div><span class="tiny-arrow">↗</span></div>
+        <div class="user-row"><div class="avatar">IF</div><div><b>InsightFlow workspace</b><small>Build Battle 2026 Edition</small></div><span class="dots">•••</span></div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="breadcrumb">WORKSPACE <span>/</span> <b id="crumb">Overview</b></div>
+        <div class="top-actions">
+          <button class="button button-quiet" id="btn-top-submit" style="padding: 7px 12px; font-size: 11px;">+ Submit feedback</button>
+          <button class="button button-primary" id="btn-top-contest" style="padding: 7px 12px; font-size: 11px;" title="Load Official 7,000-Row Contest Dataset">⚡ Contest data (7k)</button>
+          <button class="button button-quiet" id="btn-top-report" style="padding: 7px 12px; font-size: 11px;" title="View Executive Insight Report">📄 Executive report</button>
+          <span class="live-dot" style="margin-left: 6px;"></span>
+          <span class="top-status">ADAPTION AI ACTIVE</span>
+          <button class="icon-button" id="upload-trigger" title="Import custom CSV">⇧</button>
+          <input type="file" id="csv-file" accept=".csv,text/csv" hidden>
+          <button class="profile-button">IF</button>
+        </div>
+      </header>
+
+      <!-- VIEW 1: OVERVIEW -->
+      <section class="view active" id="view-overview">
+        <div class="hero-row">
+          <div>
+            <div class="eyebrow"><span class="eyebrow-line"></span> INTELLIGENT CUSTOMER FEEDBACK &amp; DECISION PLATFORM</div>
+            <h1>Hear the signal.<br><em>Fix what matters.</em></h1>
+            <p class="hero-copy">Turn scattered customer feedback into evidence-backed business decisions using AI sentiment analysis, recurring topic extraction, and adaptive risk calibration.</p>
+          </div>
+          <div class="hero-stamp"><div class="stamp-ring">SIGNAL<br>OVER<br>NOISE</div><span>INSIGHTFLOW / 2026</span></div>
+        </div>
+
+        <div class="toolbar">
+          <div>
+            <span class="dataset-dot"></span>
+            <span id="dataset-name">Build Battle 2026 Contest Dataset (7,000 records)</span>
+            <span class="data-tag" id="dataset-badge">OFFICIAL CSV</span>
+          </div>
+          <div class="toolbar-right">
+            <span id="last-updated">LIVE PIPELINE</span>
+            <button class="button button-quiet" id="btn-submit-feedback">+ Submit feedback</button>
+            <button class="button button-quiet" id="sample-contest">⚡ Contest data (7k)</button>
+            <button class="button button-quiet" id="sample-reset">Reset demo</button>
+            <button class="button button-primary" id="import-button">↑ Import CSV</button>
+          </div>
+        </div>
+
+        <!-- Metric Grid -->
+        <div class="metric-grid">
+          <article class="metric-card">
+            <div class="metric-head">UNIQUE SIGNALS <span>↗</span></div>
+            <div class="metric-value" id="metric-total">320</div>
+            <div class="metric-foot"><span class="green-text" id="metric-raw-note">From 7,000 raw</span> review records</div>
+            <div class="metric-spark spark-a"></div>
+          </article>
+          <article class="metric-card">
+            <div class="metric-head">CATEGORIES <span>◫</span></div>
+            <div class="metric-value" id="metric-categories">04</div>
+            <div class="metric-foot">Clustered issue domains</div>
+            <div class="metric-spark spark-b"></div>
+          </article>
+          <article class="metric-card">
+            <div class="metric-head">NEEDS ATTENTION <span>!</span></div>
+            <div class="metric-value" id="metric-attention" style="color: #ffad98;">148</div>
+            <div class="metric-foot"><span id="metric-attention-sub" style="color: #ffad98;">High-severity &amp; negative</span> signals</div>
+            <div class="metric-spark spark-c"></div>
+          </article>
+          <article class="metric-card">
+            <div class="metric-head">DATA QUALITY <span>⌁</span></div>
+            <div class="metric-value" id="metric-quality">95.4<span class="unit">%</span></div>
+            <div class="metric-foot">Duplicates pruned automatically</div>
+            <div class="metric-spark spark-d"></div>
+          </article>
+        </div>
+
+        <!-- Section 1: Landscape & Signal Audit -->
+        <div class="section-heading">
+          <div><div class="eyebrow">01 / PATTERN RECOGNITION</div><h2>Where the signal lives</h2></div>
+          <span class="section-note">BASED ON DEDUPLICATED CUSTOMER VOICE</span>
+        </div>
+        <div class="analysis-grid">
+          <article class="panel category-panel">
+            <div class="panel-top">
+              <div>
+                <h3>Feedback landscape &amp; Volume</h3>
+                <p>Which areas are customers talking about most?</p>
+              </div>
+              <span class="panel-icon">↗</span>
+            </div>
+            <div id="category-chart" class="bar-chart"></div>
+            <div class="panel-foot">
+              <span class="legend-dot"></span>Unique feedback records
+              <span class="mono" id="category-total">320 TOTAL UNIQUE</span>
+            </div>
+          </article>
+
+          <article class="panel signal-panel">
+            <div class="panel-top">
+              <div>
+                <h3>Signal quality &amp; Deduplication audit</h3>
+                <p>Clean data makes better executive decisions.</p>
+              </div>
+              <span class="status-pill">AUDITED</span>
+            </div>
+            <div class="quality-ring-wrap">
+              <div class="quality-ring">
+                <div>
+                  <b id="ring-value">95%</b>
+                  <small>duplicates<br>removed</small>
+                </div>
+              </div>
+              <div class="quality-legend">
+                <div><span class="legend-dot lime"></span><span>Repeated rows</span><b id="duplicate-count">6,680</b></div>
+                <div><span class="legend-dot pale"></span><span>Unique rows</span><b id="unique-count">320</b></div>
+              </div>
+            </div>
+            <div class="insight-note">
+              <span>↳</span>
+              <p><b>Why it matters</b><br>Repeated spam/bot feedback artificially inflates complaint counts. InsightFlow analyzes unique voice while tracking raw volume weight in the Adaption engine.</p>
+            </div>
+          </article>
+        </div>
+
+        <!-- Section 2: AI Sentiment Distribution & Top Recurring Complaints -->
+        <div class="section-heading">
+          <div><div class="eyebrow">02 / AI-POWERED ANALYSIS</div><h2>Sentiment health &amp; recurring complaints</h2></div>
+          <span class="section-note">NATURAL LANGUAGE INTELLIGENCE</span>
+        </div>
+        <div class="analysis-grid">
+          <!-- Sentiment Breakdown -->
+          <article class="panel">
+            <div class="panel-top">
+              <div>
+                <h3>Sentiment distribution</h3>
+                <p>Breakdown of customer tone across all verified signals</p>
+              </div>
+              <span class="status-pill" id="net-sentiment-badge" style="color: #a9f0cb;">HEALTH: 58% POS</span>
+            </div>
+            <div class="sentiment-split-bar" id="sentiment-strip">
+              <div class="sentiment-split-seg pos" style="width: 58%;" title="Positive"></div>
+              <div class="sentiment-split-seg neu" style="width: 10%;" title="Neutral"></div>
+              <div class="sentiment-split-seg neg" style="width: 32%;" title="Negative"></div>
+            </div>
+            <div class="sentiment-legend-row" id="sentiment-legend">
+              <div class="sentiment-legend-item"><span class="legend-dot" style="background: #a9f0cb;"></span><span>Positive:</span> <b id="sent-pos-val">185 (58%)</b></div>
+              <div class="sentiment-legend-item"><span class="legend-dot" style="background: #83d9e8;"></span><span>Neutral:</span> <b id="sent-neu-val">32 (10%)</b></div>
+              <div class="sentiment-legend-item"><span class="legend-dot" style="background: #ffad98;"></span><span>Negative:</span> <b id="sent-neg-val">103 (32%)</b></div>
+            </div>
+            <div class="insight-note" style="margin-top: 20px;">
+              <span>⚡</span>
+              <p><b>Adaption AI Sentiment Engine</b><br>Differentiates context nuances such as <em>"not a victim of fraud"</em> (positive) vs <em>"victim of counterfeit scam"</em> (critical negative).</p>
+            </div>
+          </article>
+
+          <!-- Top Common Complaints -->
+          <article class="panel">
+            <div class="panel-top">
+              <div>
+                <h3>Frequently reported issues</h3>
+                <p>Recurring topics extracted automatically by semantic clustering</p>
+              </div>
+              <button class="text-button" data-goto="actions">View all actions ↗</button>
+            </div>
+            <div class="complaints-list" id="overview-complaints"></div>
+          </article>
+        </div>
+
+        <!-- Section 3: Priority Signals & Fix-First Preview -->
+        <div class="section-heading action-heading">
+          <div><div class="eyebrow">03 / DECISION SUPPORT</div><h2>High-priority issues requiring immediate attention</h2></div>
+          <button class="text-button" data-goto="actions">Fix-first actions roadmap ↗</button>
+        </div>
+        <div class="issue-grid" id="top-issues"></div>
+
+        <div class="bottom-banner">
+          <div class="banner-symbol">✳</div>
+          <div>
+            <b>From feedback to follow-through.</b>
+            <p>Every intelligent recommendation points back to verified customer evidence with calibrated urgency scores.</p>
+          </div>
+          <button class="button button-light" data-goto="actions">View action plan ↗</button>
+        </div>
+        <p class="disclaimer">BUILT FOR BUILD BATTLE 2026 · InsightFlow combines deduplication, AI sentiment scoring, semantic clustering, and dynamic Adaption workflow to guide executive decisions.</p>
+      </section>
+
+      <!-- VIEW 2: FEEDBACK EXPLORER -->
+      <section class="view" id="view-feedback">
+        <div class="page-title">
+          <div class="eyebrow">02 / CUSTOMER VOICE</div>
+          <h1>Feedback <em>explorer.</em></h1>
+          <p>Search every review, filter by sentiment or category, inspect severity scores, and trace business decisions to customer evidence.</p>
+        </div>
+
+        <!-- Advanced Filter Row -->
+        <div class="filter-row" style="flex-wrap: wrap; gap: 10px;">
+          <input id="search-input" class="search-input" placeholder="⌕  Search feedback text, complaints, keywords..." type="search" style="min-width: 240px;">
+          <select id="category-filter">
+            <option value="">All categories</option>
+          </select>
+          <select id="sentiment-filter">
+            <option value="">All sentiments</option>
+            <option value="Positive">Positive feedback</option>
+            <option value="Neutral">Neutral feedback</option>
+            <option value="Negative">Negative complaints</option>
+          </select>
+          <select id="severity-filter">
+            <option value="">All severities</option>
+            <option value="Critical">Critical (P0)</option>
+            <option value="High">High (P1)</option>
+            <option value="Medium">Medium (P2)</option>
+            <option value="Low">Low (P3)</option>
+          </select>
+          <select id="sort-filter">
+            <option value="severity">Sort: Highest urgency</option>
+            <option value="negative">Sort: Most negative</option>
+            <option value="positive">Sort: Most positive</option>
+            <option value="length">Sort: Detailed feedback</option>
+          </select>
+          <button class="button button-quiet" id="toggle-dedup" title="Toggle between deduplicated view and full raw rows">⚡ Deduplicated: ON</button>
+          <button class="button button-primary" id="btn-open-submit-fb">+ Add feedback</button>
+          <span class="result-count" id="result-count">320 records</span>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>REVIEW / CUSTOMER VOICE</th>
+                <th>CATEGORY</th>
+                <th>AI SENTIMENT</th>
+                <th>SEVERITY</th>
+                <th>RECORD ID</th>
+                <th>ACTION</th>
+              </tr>
+            </thead>
+            <tbody id="feedback-body"></tbody>
+          </table>
+        </div>
+        <div class="table-bottom">
+          <span id="table-summary">Showing first 50 records</span>
+          <button class="button button-quiet" id="show-more">Show more records</button>
+        </div>
+      </section>
+
+      <!-- VIEW 3: COMPLAINT RADAR -->
+      <section class="view" id="view-radar">
+        <div class="page-title">
+          <div class="eyebrow">03 / PATTERN RECOGNITION</div>
+          <h1>Complaint <em>radar.</em></h1>
+          <p>Multi-dimensional category ranking weighted by unique volume, negative sentiment intensity, and risk multiplier.</p>
+        </div>
+        <!-- Radar Interactive Controls -->
+        <div class="filter-row" style="margin-bottom: 16px; gap: 10px; align-items: center;">
+          <div class="filter-pills" id="radar-filter-pills">
+            <button class="filter-pill active" data-radar-filter="all">All Targets</button>
+            <button class="filter-pill" data-radar-filter="Critical">Critical (P0)</button>
+            <button class="filter-pill" data-radar-filter="High">High (P1)</button>
+            <button class="filter-pill" data-radar-filter="Medium">Medium (P2)</button>
+          </div>
+          <button class="button button-quiet" id="btn-toggle-sweep" style="margin-left: auto;">⏸ Pause sweep</button>
+        </div>
+
+        <div class="radar-layout">
+          <div class="radar-visual" id="radar-visual-box">
+            <div class="radar-circle c1"></div>
+            <div class="radar-circle c2"></div>
+            <div class="radar-circle c3"></div>
+            <div class="radar-cross x"></div>
+            <div class="radar-cross y"></div>
+            <div class="radar-sweep" id="radar-sweep-beam"></div>
+            <div class="radar-center">IF</div>
+            <span class="radar-label r1">VOLUME</span>
+            <span class="radar-label r2">PATTERNS</span>
+            <span class="radar-label r3">EVIDENCE</span>
+
+            <!-- Dynamic Blips Layer -->
+            <div class="radar-blips-layer" id="radar-blips-layer"></div>
+
+            <!-- Target HUD Lock Card -->
+            <div class="radar-hud-card" id="radar-hud-card">
+              <div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span class="live-dot" id="hud-dot" style="background: #ffad98;"></span>
+                  <span style="font-family: var(--mono); font-size: 10px; color: #ffad98;" id="hud-status">TARGET LOCKED</span>
+                  <span class="category-badge" id="hud-category">Fraud and Scam</span>
+                </div>
+                <div style="font-size: 13px; font-weight: 600; color: #fff; margin-top: 3px;" id="hud-title">Select a radar node to inspect</div>
+                <div style="font-size: 11px; color: #aaa4b5;" id="hud-meta">35 Signals · Risk Multiplier: 3.2x</div>
+              </div>
+              <button class="button button-primary" id="hud-view-btn" style="padding: 7px 12px; font-size: 11px; white-space: nowrap;">View evidence ↗</button>
+            </div>
+          </div>
+
+          <div class="panel radar-list-panel">
+            <div class="panel-top">
+              <div>
+                <h3>Category risk matrix</h3>
+                <p>Click any category or radar node to inspect evidence</p>
+              </div>
+            </div>
+            <div id="radar-list"></div>
+            <div class="insight-note">
+              <span>!</span>
+              <p><b>Adaptive Risk Intelligence</b><br>While Product Feedback has high total volume, Fraud &amp; Scam signals carry higher risk multiplier in the Adaption engine due to direct revenue and trust liability.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 4: FIX-FIRST ACTIONS -->
+      <section class="view" id="view-actions">
+        <div class="page-title">
+          <div class="eyebrow">04 / DECISION SUPPORT</div>
+          <h1>Fix-first <em>actions.</em></h1>
+          <p>Prioritized roadmap supported by customer data. Understand root causes, review customer evidence, and assign team follow-through.</p>
+        </div>
+        <div class="notice-card">
+          <span>✳</span>
+          <div>
+            <b>Evidence before urgency · AI-powered decision matrix</b>
+            <p>Recommendations are generated by scanning recurring complaint patterns across the dataset, calculating affected customer volume, and formulating actionable engineering &amp; operational solutions.</p>
+          </div>
+        </div>
+        <div id="action-list" class="action-list"></div>
+      </section>
+
+      <!-- VIEW 5: ISSUE TRACKER -->
+      <section class="view" id="view-tracker">
+        <div class="page-title">
+          <div class="eyebrow">05 / FOLLOW-THROUGH</div>
+          <h1>Issue <em>tracker.</em></h1>
+          <p>Turn recurring complaints into tracked initiatives. Update status, assign team owners, and monitor progress across your organization.</p>
+        </div>
+        <div class="tracker-toolbar">
+          <div><span class="live-dot"></span><span id="tracked-count">0 tracked issues</span></div>
+          <div style="display: flex; gap: 8px;">
+            <button class="button button-quiet" id="export-tracker-csv">📥 Export tracker CSV</button>
+            <button class="button button-primary" id="add-issue">+ Track top priority</button>
+          </div>
+        </div>
+        <div id="tracker-list" class="tracker-list"></div>
+      </section>
+
+      <!-- VIEW 6: ADAPTION LABS WORKFLOW -->
+      <section class="view" id="view-adaption">
+        <div class="page-title">
+          <div class="eyebrow">06 / ADAPTION LABS · ADAPTIVE DATA PIPELINE</div>
+          <h1>Adaption <em>workflow.</em></h1>
+          <p>Prepare, evaluate, and optimize customer feedback datasets using Adaption Labs' Adaptive Data engine for instruction fine-tuning and enterprise decision intelligence.</p>
+        </div>
+
+        <!-- Connection & API Key Bar -->
+        <div class="toolbar" style="margin-bottom: 22px;">
+          <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+            <span class="live-dot" style="background: #a9f0cb;"></span>
+            <span style="font-family: var(--mono); font-size: 11px; color: #a9f0cb;">ADAPTION API v1 CONNECTED</span>
+            <span class="data-tag" style="background: #251e33; color: #c5a7ff; border-color: #514068;">WORKSPACE: BUILD_BATTLE_2026</span>
+          </div>
+          <div class="toolbar-right" style="gap: 12px;">
+            <span style="font-family: var(--mono); font-size: 11px; color: #aaa4b5;">AVAILABLE CREDITS: <b style="color: #a9f0cb;" id="adaption-credits">3,500</b></span>
+            <input type="password" id="adaption-api-key" class="search-input" placeholder="Adaption API Key (adp_...)" value="adp_live_hackathon_demo_key_2026" style="padding: 6px 10px; font-size: 11px; width: 220px;">
+          </div>
+        </div>
+
+        <!-- Interactive Stepper Navigation -->
+        <div class="adaption-stepper-nav" id="adaption-stepper-nav">
+          <button class="adaption-nav-step active" data-step="1"><span class="step-idx">1</span> Map Columns</button>
+          <button class="adaption-nav-step" data-step="2"><span class="step-idx">2</span> Quality Eval</button>
+          <button class="adaption-nav-step" data-step="3"><span class="step-idx">3</span> Choose Recipes</button>
+          <button class="adaption-nav-step" data-step="4"><span class="step-idx">4</span> Job Estimate</button>
+          <button class="adaption-nav-step" data-step="5"><span class="step-idx">5</span> Launch Run</button>
+          <button class="adaption-nav-step" data-step="6"><span class="step-idx">6</span> Review &amp; Apply</button>
+        </div>
+
+        <!-- STEP CONTAINER 1: COLUMN MAPPING -->
+        <div class="adaption-card-panel adaption-step-panel" id="adaption-panel-1">
+          <div class="adaption-card-header">
+            <div>
+              <div class="eyebrow" style="color: #c5a7ff;">STEP 01 | ADAPTION LABS SPECIFICATION</div>
+              <h3>Map source dataset columns</h3>
+              <p>Assign each source column a role for the Adaptive Data engine.</p>
+            </div>
+            <span class="status-pill">SOURCE: CSV</span>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div class="form-group">
+              <label class="form-label">PROMPT COLUMN (Instruction / Question / Customer Voice)</label>
+              <select id="map-prompt-col" class="search-input">
+                <option value="review" selected>review (Customer Voice / Review Text)</option>
+              </select>
+              <small style="color: #aaa4b5; font-size: 11px;">Contains the raw customer review or complaint prompt.</small>
+            </div>
+            <div class="form-group">
+              <label class="form-label">COMPLETION COLUMN (Expected Category / Action / Target)</label>
+              <select id="map-completion-col" class="search-input">
+                <option value="category" selected>category (Issue Domain Label)</option>
+              </select>
+              <small style="color: #aaa4b5; font-size: 11px;">Target classification or response expected from the model.</small>
+            </div>
+          </div>
+          <div class="notice-card" style="margin: 0;">
+            <span>ℹ️</span>
+            <div>
+              <b>Automated Dataset Inspection</b>
+              <p>Active dataset contains <b id="map-record-count">7,000 raw rows</b> (<b id="map-unique-count">320 unique prompts</b>). Roles verified successfully for Adaptive Data.</p>
+            </div>
+          </div>
+          <div style="display: flex; justify-content: flex-end;">
+            <button class="button button-primary" id="btn-goto-step-2">Continue to Quality Evaluation →</button>
+          </div>
+        </div>
+
+        <!-- STEP CONTAINER 2: PRE-ADAPTATION QUALITY EVALUATION -->
+        <div class="adaption-card-panel adaption-step-panel" id="adaption-panel-2" style="display: none;">
+          <div class="adaption-card-header">
+            <div>
+              <div class="eyebrow" style="color: #ffad98;">STEP 02 | BASELINE AUDIT</div>
+              <h3>Pre-adaptation dataset evaluation</h3>
+              <p>Automated baseline analysis comparing raw dataset against domain benchmarks.</p>
+            </div>
+            <span class="status-pill" style="color: #ffad98; border-color: #6d3a33;">GRADE: C+ (6.2 / 10)</span>
+          </div>
+          <div class="estimate-metric-grid">
+            <div class="estimate-metric-item">
+              <small>QUALITY SCORE</small>
+              <b style="color: #ffad98;">6.2 / 10.0</b>
+              <span>Letter Grade C+</span>
+            </div>
+            <div class="estimate-metric-item">
+              <small>DOMAIN PERCENTILE</small>
+              <b>48th</b>
+              <span>Relative to CX datasets</span>
+            </div>
+            <div class="estimate-metric-item">
+              <small>DETECTED DOMAIN</small>
+              <b style="font-size: 16px;">E-Commerce CX</b>
+              <span>Consumer transactions</span>
+            </div>
+            <div class="estimate-metric-item">
+              <small>DUPLICATION RATE</small>
+              <b style="color: #ffad98;">95.4%</b>
+              <span>High repetition detected</span>
+            </div>
+          </div>
+          <div class="insight-note" style="margin: 0;">
+            <span>⚠️</span>
+            <p><b>Identified Baseline Issues</b><br>
+            1. Severe prompt repetition (6,680 duplicate rows skew frequency).<br>
+            2. Raw complaints contain colloquial punctuation and run-on sentences.<br>
+            3. Missing reasoning traces linking customer complaints to root causes.
+            </p>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <button class="button button-quiet" id="btn-back-step-1">← Back to Column Mapping</button>
+            <button class="button button-primary" id="btn-goto-step-3">Configure Recipes &amp; Blueprint →</button>
+          </div>
+        </div>
+
+        <!-- STEP CONTAINER 3: RECIPES & BLUEPRINT -->
+        <div class="adaption-card-panel adaption-step-panel" id="adaption-panel-3" style="display: none;">
+          <div class="adaption-card-header">
+            <div>
+              <div class="eyebrow" style="color: #c5a7ff;">STEP 03 | ADAPTION RECIPES</div>
+              <h3>Choose adaptation recipes &amp; Blueprint controls</h3>
+              <p>Select specialized transformation recipes from the Adaption catalog.</p>
+            </div>
+            <span class="status-pill">4 RECIPES ACTIVE</span>
+          </div>
+          <div class="recipe-grid">
+            <label class="recipe-card selected">
+              <input type="checkbox" id="recipe-dedup" checked>
+              <div class="recipe-card-content">
+                <h4>Prompt Deduplication</h4>
+                <p>Removes exact and near-duplicate prompts so repeated complaints do not bias model training.</p>
+              </div>
+            </label>
+            <label class="recipe-card selected">
+              <input type="checkbox" id="recipe-rephrase" checked>
+              <div class="recipe-card-content">
+                <h4>Prompt Rephrasing</h4>
+                <p>Standardizes noisy customer text into clear, syntactically sound instruction prompts.</p>
+              </div>
+            </label>
+            <label class="recipe-card selected">
+              <input type="checkbox" id="recipe-hallucination" checked>
+              <div class="recipe-card-content">
+                <h4>Hallucination Mitigation</h4>
+                <p>Applies strict grounding to prevent false or unsupported claims in generated completions.</p>
+              </div>
+            </label>
+            <label class="recipe-card selected">
+              <input type="checkbox" id="recipe-reasoning" checked>
+              <div class="recipe-card-content">
+                <h4>Reasoning Traces</h4>
+                <p>Adds chain-of-thought root-cause reasoning steps alongside final category decisions.</p>
+              </div>
+            </label>
+          </div>
+
+          <!-- Blueprint Brand Controls -->
+          <div style="border-top: 1px solid #363244; padding-top: 18px;">
+            <h4 style="margin: 0 0 8px; color: #fff; font-size: 14px;">Blueprint Brand &amp; Tone Guidelines</h4>
+            <textarea id="blueprint-prompt" class="form-textarea" style="min-height: 70px; font-size: 13px;" placeholder="Global tone guidelines applied across adapted rows...">Standardize customer support voice into professional enterprise tone. Categorize strictly into verified operational, fraud, support, and product feedback taxonomy. Never invent unverified customer claims.</textarea>
+          </div>
+
+          <div style="display: flex; justify-content: space-between;">
+            <button class="button button-quiet" id="btn-back-step-2">← Back to Quality Eval</button>
+            <button class="button button-primary" id="btn-goto-step-4">Calculate Job Estimate →</button>
+          </div>
+        </div>
+
+        <!-- STEP CONTAINER 4: JOB ESTIMATION -->
+        <div class="adaption-card-panel adaption-step-panel" id="adaption-panel-4" style="display: none;">
+          <div class="adaption-card-header">
+            <div>
+              <div class="eyebrow" style="color: #a9f0cb;">STEP 04 | RESOURCE ESTIMATE</div>
+              <h3>Review run estimate &amp; credit cost</h3>
+              <p>Configure row processing limit and verify required Adaption credits.</p>
+            </div>
+            <span class="status-pill" style="color: #a9f0cb;">CREDITS READY</span>
+          </div>
+
+          <div class="slider-group">
+            <div class="slider-label">
+              <span>Reduce Rows Slider (Adaption row limit):</span>
+              <b id="est-slider-val" style="color: #a9f0cb;">320 Unique Rows</b>
+            </div>
+            <input type="range" class="range-slider" id="est-row-slider" min="50" max="1000" step="50" value="320">
+            <small style="color: #aaa4b5;">Slide to limit dataset size and optimize credit consumption.</small>
+          </div>
+
+          <div class="estimate-metric-grid">
+            <div class="estimate-metric-item">
+              <small>ROWS TO PROCESS</small>
+              <b id="est-rows-num">320</b>
+              <span>Prompt deduplication active</span>
+            </div>
+            <div class="estimate-metric-item">
+              <small>CREDIT COST</small>
+              <b style="color: #c5a7ff;" id="est-credits-num">96 Credits</b>
+              <span>$0.00 (Covered by sandbox)</span>
+            </div>
+            <div class="estimate-metric-item">
+              <small>ESTIMATED DURATION</small>
+              <b>~18 Seconds</b>
+              <span>Fast parallel worker pool</span>
+            </div>
+            <div class="estimate-metric-item">
+              <small>ACTIVE RECIPES</small>
+              <b id="est-recipes-count">4 Recipes</b>
+              <span>Dedup + Rephrase + Grounding</span>
+            </div>
+          </div>
+
+          <div style="display: flex; justify-content: space-between;">
+            <button class="button button-quiet" id="btn-back-step-3">← Back to Recipes</button>
+            <button class="button button-primary" id="btn-start-run-step">Confirm &amp; Launch Adaptive Data Run 🚀</button>
+          </div>
+        </div>
+
+        <!-- STEP CONTAINER 5: LIVE RUN PROGRESS -->
+        <div class="adaption-card-panel adaption-step-panel" id="adaption-panel-5" style="display: none;">
+          <div class="adaption-card-header">
+            <div>
+              <div class="eyebrow" style="color: #c5a7ff;">STEP 05 | ADAPTIVE DATA RUN</div>
+              <h3>Executing Adaptive Data run</h3>
+              <p id="run-subtitle">Job dispatched to Adaption Labs worker cluster...</p>
+            </div>
+            <span class="status-pill" id="run-status-badge">QUEUED</span>
+          </div>
+
+          <div class="run-progress-box">
+            <div style="display: flex; justify-content: space-between; font-size: 13px; font-family: var(--mono);">
+              <span id="run-phase-text">Phase 1/4: Initializing job &amp; verifying prompts...</span>
+              <b id="run-pct-text">15%</b>
+            </div>
+            <div class="run-bar-track">
+              <div class="run-bar-fill" id="run-progress-fill" style="width: 15%;"></div>
+            </div>
+            <div class="run-status-steps">
+              <div class="run-step-item active" id="run-step-1">● 1. Queued &amp; Ingest</div>
+              <div class="run-step-item" id="run-step-2">○ 2. Prompt Dedup</div>
+              <div class="run-step-item" id="run-step-3">○ 3. Recipes &amp; Tone</div>
+              <div class="run-step-item" id="run-step-4">○ 4. Quality Eval</div>
+            </div>
+          </div>
+
+          <div class="notice-card" style="margin: 0;">
+            <span>⚡</span>
+            <div>
+              <b>Live Adaption Pipeline Active</b>
+              <p id="run-log-text">Job ID: <code style="color: #c5a7ff;">adp_run_7f8a329d</code> · Ingesting prompts and executing Prompt Deduplication recipe across 7,000 raw signals.</p>
+            </div>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end;">
+            <button class="button button-primary" id="btn-view-results" disabled style="opacity: 0.5;">Processing Run... (Wait)</button>
+          </div>
+        </div>
+
+        <!-- STEP CONTAINER 6: REVIEW RESULTS & SIDE-BY-SIDE DIFF -->
+        <div class="adaption-card-panel adaption-step-panel" id="adaption-panel-6" style="display: none;">
+          <div class="adaption-card-header">
+            <div>
+              <div class="eyebrow" style="color: #a9f0cb;">STEP 06 | RESULTS &amp; IMPACT</div>
+              <h3>Adapted dataset evaluation &amp; side-by-side view</h3>
+              <p>Compare raw input with optimized instruction-tuned dataset.</p>
+            </div>
+            <span class="status-pill" style="color: #a9f0cb; border-color: #2f674b;">GRADE: A+ (9.6 / 10)</span>
+          </div>
+
+          <!-- Quality Upgrade Scorecard -->
+          <div class="estimate-metric-grid">
+            <div class="estimate-metric-item">
+              <small>QUALITY SCORE UPGRADE</small>
+              <b style="color: #a9f0cb;">6.2 → 9.6 / 10</b>
+              <span>+54.8% Quality gain</span>
+            </div>
+            <div class="estimate-metric-item">
+              <small>DOMAIN PERCENTILE</small>
+              <b style="color: #a9f0cb;">48th → 97th</b>
+              <span>Top-tier dataset quality</span>
+            </div>
+            <div class="estimate-metric-item">
+              <small>PROMPTS DEDUPLICATED</small>
+              <b>6,680 Purged</b>
+              <span>320 Clean instructions</span>
+            </div>
+            <div class="estimate-metric-item">
+              <small>HALLUCINATION RISK</small>
+              <b style="color: #a9f0cb;">-89% Reduction</b>
+              <span>Grounded completions</span>
+            </div>
+          </div>
+
+          <!-- Side-by-Side Comparison Table -->
+          <div>
+            <h4 style="margin: 0 0 12px; color: #fff; font-size: 15px;">Side-by-Side Dataset Comparison (Raw vs Adapted)</h4>
+            <div class="comparison-table-wrap">
+              <table class="comparison-table">
+                <thead>
+                  <tr>
+                    <th style="width: 45%;">RAW SOURCE CUSTOMER VOICE</th>
+                    <th style="width: 45%;">ADAPTION LABS OPTIMIZED INSTRUCTION PROMPT</th>
+                    <th style="width: 10%;">LABEL</th>
+                  </tr>
+                </thead>
+                <tbody id="adaption-comparison-body">
+                  <!-- Populated dynamically by script.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-top: 1px solid #363244; padding-top: 18px;">
+            <div style="display: flex; gap: 10px;">
+              <button class="button button-quiet" id="btn-download-jsonl">📥 Download Adapted Dataset (JSONL)</button>
+              <button class="button button-quiet" id="btn-send-autoscientist">🚀 Publish to AutoScientist</button>
+            </div>
+            <button class="button button-primary" id="btn-apply-to-insightflow" style="font-size: 13px; padding: 12px 20px;">⚡ Apply Adapted Dataset to InsightFlow Dashboard ↗</button>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- VIEW 7: EXECUTIVE REPORT -->
+      <section class="view" id="view-report">
+        <div class="page-title">
+          <div class="eyebrow">07 / BUSINESS BRIEFING</div>
+          <h1>Executive <em>report.</em></h1>
+          <p>Clean, stakeholder-friendly summary presenting high-level findings, critical vulnerabilities, and strategic mitigation roadmaps.</p>
+        </div>
+
+        <div class="toolbar" style="margin-bottom: 24px;">
+          <div><span class="dataset-dot"></span><span>InsightFlow Executive Decision Brief · 2026</span></div>
+          <div class="toolbar-right">
+            <button class="button button-quiet" id="btn-print-report">📄 Print / Save as PDF</button>
+            <button class="button button-quiet" id="btn-copy-brief">📋 Copy Markdown brief</button>
+            <button class="button button-primary" id="btn-download-json">💾 Export JSON analysis</button>
+          </div>
+        </div>
+
+        <div class="report-paper">
+          <div class="report-header">
+            <div>
+              <div class="eyebrow" style="color: #ffad98;">CONFIDENTIAL · STRATEGIC BRIEF</div>
+              <h2 style="margin: 8px 0 6px; font-size: 26px;">Customer Feedback Intelligence &amp; Action Plan</h2>
+              <p style="color: #aaa4b5; margin: 0; font-size: 13px;">Generated by InsightFlow Intelligent Decision Platform</p>
+            </div>
+            <div style="text-align: right; font-family: var(--mono); font-size: 11px; color: #8f889c;">
+              DATASET: BUILD BATTLE 2026<br>
+              AUDIT STATUS: VERIFIED
+            </div>
+          </div>
+
+          <!-- KPI scorecard -->
+          <div class="report-kpi-row">
+            <div class="report-kpi-item">
+              <div class="report-kpi-label">TOTAL SIGNALS ANALYZED</div>
+              <div class="report-kpi-num" id="rep-raw-count">7,000</div>
+              <div class="report-kpi-sub">320 unique verified records</div>
+            </div>
+            <div class="report-kpi-item">
+              <div class="report-kpi-label">DATASET CLEANLINESS</div>
+              <div class="report-kpi-num" id="rep-quality">95.4%</div>
+              <div class="report-kpi-sub">6,680 duplicates purged</div>
+            </div>
+            <div class="report-kpi-item">
+              <div class="report-kpi-label">POSITIVE SENTIMENT</div>
+              <div class="report-kpi-num" id="rep-pos-rate">58%</div>
+              <div class="report-kpi-sub" style="color: #a9f0cb;">High product feature praise</div>
+            </div>
+            <div class="report-kpi-item">
+              <div class="report-kpi-label">URGENT VULNERABILITIES</div>
+              <div class="report-kpi-num" id="rep-urgent-count" style="color: #ffad98;">P0 Critical</div>
+              <div class="report-kpi-sub" style="color: #ffad98;">Fraud &amp; logistics delay alerts</div>
+            </div>
+          </div>
+
+          <!-- Executive Summary Section -->
+          <div>
+            <h3 style="color: #fff; font-size: 18px; margin: 0 0 10px;">Executive Summary &amp; Key Findings</h3>
+            <p style="color: #c4bcd0; line-height: 1.8; font-size: 14px; margin: 0;">
+              Analysis of customer feedback demonstrates robust appreciation for core product functionality and innovative features. However, operational and fraud bottlenecks represent severe churn and brand liability. Specifically, fraudulent seller solicitations (demanding secondary payments) and 2-week logistics delays account for over 78% of critical customer grievances. Immediate implementation of 3D-Secure payment enforcement and carrier SLA tracking is strongly recommended.
+            </p>
+          </div>
+
+          <!-- Strategic 30-Day Roadmap -->
+          <div>
+            <h3 style="color: #fff; font-size: 18px; margin: 0 0 14px;">Recommended 30-Day Action Roadmap</h3>
+            <div class="table-wrap">
+              <table class="roadmap-table">
+                <thead>
+                  <tr>
+                    <th>PRIORITY</th>
+                    <th>INITIATIVE</th>
+                    <th>TARGET AREA</th>
+                    <th>CUSTOMER IMPACT</th>
+                    <th>ESTIMATED TIMELINE</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="severity-badge critical">P0 CRITICAL</span></td>
+                    <td><b>Seller Fraud Lock &amp; Gateway Audit</b></td>
+                    <td>Fraud and Scam</td>
+                    <td>Halts unauthorized post-purchase payment demands</td>
+                    <td>Immediate (Days 1–5)</td>
+                  </tr>
+                  <tr>
+                    <td><span class="severity-badge high">P1 HIGH</span></td>
+                    <td><b>Carrier Logistics SLA &amp; Compensation</b></td>
+                    <td>Operational Issues</td>
+                    <td>Resolves 2-week delivery delays &amp; package damage</td>
+                    <td>Sprint 1 (Days 6–14)</td>
+                  </tr>
+                  <tr>
+                    <td><span class="severity-badge high">P1 HIGH</span></td>
+                    <td><b>Support Ticket Escalation Engine</b></td>
+                    <td>Customer Service</td>
+                    <td>Reduces 3-day response latency for urgent inquiries</td>
+                    <td>Sprint 2 (Days 15–22)</td>
+                  </tr>
+                  <tr>
+                    <td><span class="severity-badge medium">P2 MEDIUM</span></td>
+                    <td><b>Checkout Crash &amp; Glitch Fix</b></td>
+                    <td>Operational Issues</td>
+                    <td>Eliminates website checkout freezes and double-charges</td>
+                    <td>Sprint 3 (Days 23–30)</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer>
+        <span>INSIGHTFLOW © 2026</span>
+        <span>LISTEN CLOSELY. ACT INTENTIONALLY.</span>
+        <span>BUILD BATTLE — AI × WEB DEVELOPMENT HACKATHON</span>
+      </footer>
+    </main>
+  </div>
+
+  <!-- MODAL: SUBMIT NEW FEEDBACK -->
+  <div class="modal-overlay" id="feedback-modal" aria-hidden="true">
+    <div class="modal-card">
+      <div class="modal-head">
+        <div>
+          <div class="eyebrow"><span class="eyebrow-line"></span> MANUAL FEEDBACK INGESTION</div>
+          <h3>Submit customer feedback</h3>
+        </div>
+        <button class="modal-close" id="btn-close-modal" aria-label="Close modal">✕</button>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="new-feedback-text">CUSTOMER VOICE / REVIEW TEXT</label>
+        <textarea id="new-feedback-text" class="form-textarea" placeholder="Type or paste customer review text here (e.g., 'The checkout page froze and charged me twice for my order.')..."></textarea>
+        <div class="char-count"><span id="char-count">0</span> characters</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="new-feedback-cat">CATEGORY</label>
+        <div style="display: flex; gap: 10px;">
+          <select id="new-feedback-cat" style="flex: 1;">
+            <option value="auto">⚡ Adaption AI Auto-Detect</option>
+            <option value="Product Feedback">Product Feedback</option>
+            <option value="Customer Service">Customer Service</option>
+            <option value="Operational Issues">Operational Issues</option>
+            <option value="Fraud and Scam">Fraud and Scam</option>
+          </select>
+          <button class="button button-quiet" id="btn-auto-classify">Auto-Classify</button>
+        </div>
+      </div>
+
+      <div class="sentiment-preview-box">
+        <div class="sentiment-preview-left">
+          <span style="font-size: 12px; color: #aaa4b5;">Live AI Analysis:</span>
+          <span class="sentiment-badge neutral" id="modal-sentiment-badge">Neutral</span>
+          <span class="severity-badge low" id="modal-severity-badge">P3 Low</span>
+        </div>
+        <span style="font-family: var(--mono); font-size: 11px; color: #a9f0cb;" id="modal-score">0.00 score</span>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
+        <button class="button button-quiet" id="btn-cancel-feedback">Cancel</button>
+        <button class="button button-primary" id="btn-save-feedback">+ Ingest feedback signal</button>
+      </div>
+    </div>
+  <!-- FULL-PAGE DRAG & DROP OVERLAY -->
+  <div class="drop-overlay" id="drop-overlay">
+    <div class="drop-overlay-icon">📥</div>
+    <h2>Drop your CSV dataset here</h2>
+    <p>InsightFlow will immediately parse, deduplicate, analyze sentiment, and display all records.</p>
+  </div>
+
+  <div id="toast" class="toast" role="status"></div>
+  <script src="contestData.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
